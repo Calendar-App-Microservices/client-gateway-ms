@@ -21,8 +21,7 @@ import { NATS_SERVICE, envs } from '../config';
     exports: [
         ClientsModule.register([
 
-            /* Conectamos el microservicio */
-      
+        
             { 
               name: NATS_SERVICE, 
               transport: Transport.NATS,

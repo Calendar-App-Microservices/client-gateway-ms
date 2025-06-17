@@ -1,5 +1,6 @@
 import { Type } from "class-transformer";
 import { IsBoolean, IsDate, IsEmail, IsEnum, IsOptional, IsString } from "class-validator";
+import { Roles } from "../enum/roles.enum";
 
 export class CreateUserDto {
 
@@ -12,15 +13,22 @@ export class CreateUserDto {
 
     @IsString()
     password:string;
-/*
-    @IsEnum(Role)
+
+    
+    @IsEnum(Roles)
     @IsOptional()
-    role?: Roles;*/
+    role?: Roles
 
     @IsBoolean()
     @IsOptional()
     available?: boolean;
   
+
+    @IsDate()
+    @Type(() => Date)
+    @IsOptional()
+    updatedAt?: Date;
+
     @IsDate()
     @Type(() => Date)
     @IsOptional()
