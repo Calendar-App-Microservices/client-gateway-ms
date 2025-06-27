@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Query, UseGuards } from '@nestjs/common';
 import { NATS_SERVICE } from '../config';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { CreateUserDto, LoginUserDto } from './dto';
@@ -6,6 +6,7 @@ import { catchError } from 'rxjs';
 import { AuthGuard } from './guards/auth.guard';
 import { Token, User } from './decorators';
 import { CurrentUser } from './interfaces/current-user.interface';
+import { PaginationDto } from '../common';
 
 @Controller('auth')
 export class AuthController {
@@ -39,6 +40,16 @@ export class AuthController {
   verifyToken( @User() user: CurrentUser, @Token() token: string  ) {
 
     return { user, token }
+  }
+
+  @Get('getAll')
+  findAllProducts(@Query() paginationDto: PaginationDto) {
+    return this.client.send('get.all.users', paginationDto)
+      .pipe(
+        catchError(error => {
+          throw new RpcException(error);
+        }),
+      );
   }
 
 
