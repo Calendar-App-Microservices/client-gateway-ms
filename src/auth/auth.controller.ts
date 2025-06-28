@@ -7,6 +7,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { Token, User } from './decorators';
 import { CurrentUser } from './interfaces/current-user.interface';
 import { PaginationDto } from '../common';
+import { Auth } from './decorators/auth.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -24,7 +25,6 @@ export class AuthController {
     ) 
   }
 
-  @UseGuards( AuthGuard )
   @Post('login')
   loginUser( @Body() loginUserDto: LoginUserDto ) { 
     return this.client.send('login.user', loginUserDto)
@@ -35,13 +35,15 @@ export class AuthController {
     ); 
   }
 
- @UseGuards( AuthGuard )
+ @Auth()
   @Get('verify')
   verifyToken( @User() user: CurrentUser, @Token() token: string  ) {
 
     return { user, token }
   }
 
+
+  @Auth()
   @Get('getAll')
   findAllProducts(@Query() paginationDto: PaginationDto) {
     return this.client.send('get.all.users', paginationDto)
