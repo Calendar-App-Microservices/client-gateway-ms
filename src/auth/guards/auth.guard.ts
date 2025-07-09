@@ -9,16 +9,16 @@ import { ClientProxy } from '@nestjs/microservices';
 
 import { Request } from 'express';
 import { firstValueFrom } from 'rxjs';
-import { NATS_SERVICE } from 'src/config';
+import { NATS_SERVICE } from '../../config';
 
+/*  Guard que se encarga de verificar el token de acceso
+  y extraer el usuario del token para que pueda ser usado en el request */
 @Injectable()
 export class AuthGuard implements CanActivate {
 
   constructor(
     @Inject( NATS_SERVICE ) private readonly client: ClientProxy, 
   ) {}
-
-
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
 
@@ -35,7 +35,6 @@ export class AuthGuard implements CanActivate {
       
       request['user'] = user;
       request['token'] = newToken;
-
 
     } catch {
       throw new UnauthorizedException();

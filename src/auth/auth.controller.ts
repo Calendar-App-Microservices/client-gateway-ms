@@ -3,7 +3,6 @@ import { NATS_SERVICE } from '../config';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { catchError } from 'rxjs';
-import { AuthGuard } from './guards/auth.guard';
 import { Token, User } from './decorators';
 import { CurrentUser } from './interfaces/current-user.interface';
 import { PaginationDto } from '../common';
@@ -15,9 +14,10 @@ export class AuthController {
     @Inject(NATS_SERVICE) private readonly client: ClientProxy,
   ) {}
 
+  
   @Post('register')
   createUser( @Body() createUserDto: CreateUserDto)  {
-    return this.client.send('register.user', createUserDto )
+    return this.client.send('register.user', createUserDto)
     .pipe(
       catchError(error => {
         throw new RpcException(error);

@@ -5,9 +5,22 @@ import { META_ROLES } from '../decorators/role-protected.decorator';
 import { CreateUserDto } from '../dto';
 
 
-@Injectable()
+/*     Guard que se encarga de ver el usuario y si tiene los roles
+        necesarios para acceder a la ruta o controlador.
+Este guard se usa junto con el decorador @RoleProtected para proteger rutas por roles.
+Si el usuario no tiene un rol válido, lanza una ForbiddenException.
+Si el usuario no está presente en el request, lanza una BadRequestException.
+Si no hay roles requeridos, permite el acceso sin restricciones.
+Si hay roles requeridos, verifica que el usuario tenga al menos uno de los roles válidos.
+Si el usuario tiene un rol válido, permite el acceso a la ruta o controlador. 
+ Ejemplo de uso:
+ @RoleProtected(Roles.ADMIN, Roles.USER)
+ @Get('admin')
+ @Auth(Roles.ADMIN)
 
-// Guard que se encarga de ver el usuario y si tiene los roles
+*/
+
+@Injectable()
 export class UserRoleGuard implements CanActivate {
 
     constructor(
