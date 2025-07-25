@@ -7,6 +7,8 @@ import { Token, User } from './decorators';
 import { CurrentUser } from './interfaces/current-user.interface';
 import { PaginationDto } from '../common';
 import { Auth } from './decorators/auth.decorator';
+import { ForgotPasswordDto, ResetPasswordDto } from './dto/mail.dto/mail.dto';
+import { ConfirmAccountDto } from './dto/confirm-account.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -23,6 +25,15 @@ export class AuthController {
         throw new RpcException(error);
       })
     ) 
+  }
+
+  @Post('confirm')
+  async confirmAccount(@Body() confirmAccountDto: ConfirmAccountDto) {
+    return this.client.send('auth.confirm', confirmAccountDto).pipe(
+      catchError(error => {
+        throw new RpcException(error);
+      }),
+    );
   }
 
   @Post('login')
@@ -52,6 +63,25 @@ export class AuthController {
           throw new RpcException(error);
         }),
       );
+  }
+
+    @Post('forgot-password')
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    return this.client.send('auth.forgot-password', forgotPasswordDto).pipe(
+      catchError(error => {
+        console.error('Error in forgotPassword:', error);
+        throw new RpcException(error);
+      }),
+    );
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.client.send('auth.reset-password', resetPasswordDto).pipe(
+      catchError(error => {
+        throw new RpcException(error);
+      }),
+    );
   }
 
 
