@@ -1,14 +1,14 @@
-import { Body, Controller, Get, Inject, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { NATS_SERVICE } from '../config';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { CreateUserDto, LoginUserDto } from './dto';
+import { ChangePasswordDto, CreateUserDto, ForgotPasswordDto, LoginUserDto, ResetPasswordDto } from './dto';
 import { catchError } from 'rxjs';
 import { Token, User } from './decorators';
 import { CurrentUser } from './interfaces/current-user.interface';
 import { PaginationDto } from '../common';
 import { Auth } from './decorators/auth.decorator';
-import { ForgotPasswordDto, ResetPasswordDto } from './dto/mail.dto/mail.dto';
 import { ConfirmAccountDto } from './dto/confirm-account.dto';
+import { AuthGuard } from './guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -65,24 +65,26 @@ export class AuthController {
       );
   }
 
-    @Post('forgot-password')
-  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
-    return this.client.send('auth.forgot-password', forgotPasswordDto).pipe(
-      catchError(error => {
-        console.error('Error in forgotPassword:', error);
-        throw new RpcException(error);
-      }),
-    );
+ 
+  // Cambio de contraseña autenticado
+  @UseGuards(AuthGuard)
+  @Post('change-password')
+  async changePassword(@Req() req: Request, @Body() dto: ChangePasswordDto) {
+    const userId = req['user'].id;
+    return this.client.send('auth.change-password', { userId, dto });
   }
 
+  // Forgot password (email)
+  @Post('forgot-password')
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.client.send('auth.forgot-password', dto);
+  }
+
+  // Reset password (token del email)
   @Post('reset-password')
-  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
-    return this.client.send('auth.reset-password', resetPasswordDto).pipe(
-      catchError(error => {
-        throw new RpcException(error);
-      }),
-    );
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.client.send('auth.reset-password', dto);
   }
-
-
 }
+
+
