@@ -9,6 +9,13 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
 
+   app.enableCors({
+    origin: 'http://localhost:4200', // acá poner el dominio de tu frontend
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
+    //credentials: true, // si algún día uso cookies
+  });
+
   app.setGlobalPrefix('api');
   app.useGlobalPipes(
     new ValidationPipe({

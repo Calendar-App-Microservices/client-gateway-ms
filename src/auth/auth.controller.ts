@@ -1,14 +1,13 @@
 import { Body, Controller, Get, Inject, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { NATS_SERVICE } from '../config';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { ChangePasswordDto, CreateUserDto, ForgotPasswordDto, LoginUserDto, ResetPasswordDto } from './dto';
+import { CreateUserDto, ForgotPasswordDto, LoginUserDto, ResetPasswordDto } from './dto';
 import { catchError } from 'rxjs';
 import { Token, User } from './decorators';
 import { CurrentUser } from './interfaces/current-user.interface';
 import { PaginationDto } from '../common';
 import { Auth } from './decorators/auth.decorator';
 import { ConfirmAccountDto } from './dto/confirm-account.dto';
-import { AuthGuard } from './guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -63,15 +62,6 @@ export class AuthController {
           throw new RpcException(error);
         }),
       );
-  }
-
- 
-  // Cambio de contraseña autenticado
-  @UseGuards(AuthGuard)
-  @Post('change-password')
-  async changePassword(@Req() req: Request, @Body() dto: ChangePasswordDto) {
-    const userId = req['user'].id;
-    return this.client.send('auth.change-password', { userId, dto });
   }
 
   // Forgot password (email)
